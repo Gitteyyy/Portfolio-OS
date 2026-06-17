@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio OS</title>
+    
+    <link rel="icon" type="image/svg+xml" href="https://api.iconify.design/lucide:terminal.svg?color=%2310b981">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main id="desktop">
+        
+        <div class="shortcut" onclick="openWindow('about-win')">
+            <img src="https://api.iconify.design/lucide:user-circle.svg?color=%23cbd5e1" alt="About" class="icon-avatar-img">
+            <span class="icon-label">About_me.txt</span>
+        </div>
+
+        <div class="shortcut" onclick="openWindow('projects-win')">
+            <img src="https://api.iconify.design/lucide:folder-code.svg?color=%23cbd5e1" alt="Projects" class="icon-avatar-img">
+            <span class="icon-label">Projects.deb</span>
+        </div>
+
+        <div id="about-win" class="window" style="display: none; top: 10%; left: 15%;">
+            <div class="window-header">
+                <span class="window-title"><img src="https://api.iconify.design/lucide:user-circle.svg?color=%23cbd5e1" alt="About" class="header-icon"> About_me.txt</span>
+                <div class="window-controls">
+                    <button class="win-btn close-btn" onclick="closeWindow('about-win')">✕</button>
+                </div>
+            </div>
+            <div class="window-body">
+                <h2>print("Hello World!")</h2>
+                <p>I am an incoming BSIT freshman, I'm building a solid foundation in software development and technical problem-solving.</p>
+                <hr>
+                <h3>Technical Passions:</h3>
+                <ul>
+                    <li>Front-end Web Development (HTML, CSS, JS)</li>
+                    <li>System Optimization & Hardware Diagnostics</li>
+                    <li>Creative Media & Digital Assets</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="projects-win" class="window" style="display: none; top: 20%; left: 30%;">
+            <div class="window-header">
+                <span class="window-title"><img src="https://api.iconify.design/lucide:folder-code.svg?color=%23cbd5e1" alt="Projects" class="header-icon"> Debian Package Viewer: Projects.deb</span>
+                <div class="window-controls">
+                    <button class="win-btn close-btn" onclick="closeWindow('projects-win')">✕</button>
+                </div>
+            </div>
+            <div class="window-body">
+                <h2>/usr/bin/projects</h2>
+                <p>Here are some of the concepts and builds I've been experimenting with:</p>
+                
+                <div class="project-card">
+                    <h4>System Optimization Configurations</h4>
+                    <p>Debloating Windows OS to its maximum limits by disabling unnecessary apps and services and using debloater like Chris Titus Tool and O&O Shutup.</p>
+                </div>
+
+                <div class="project-card">
+                    <h4>Portfolio OS Interface</h4>
+                    <p>A responsive desktop simulation built purely with semantic HTML, modern CSS layers, and vanilla DOM manipulation scripts.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer id="taskbar">
+        <button id="start-btn" style="font-family: monospace; font-weight: bold;">
+            <span style="color: #10b981;">$</span> sudo
+        </button>
+        <div id="active-apps"></div>
+        <div id="system-clock">00:00:00 PM</div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
