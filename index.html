@@ -9,7 +9,38 @@
     
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="auth-mode"> <div id="logon-screen" class="window">
+        <div class="window-header">
+            <span class="window-title">
+                <img src="https://api.iconify.design/lucide:terminal.svg?color=%23ffffff" alt="Console" class="header-icon"> 
+                Command Prompt - Authentication
+            </span>
+        </div>
+        <div class="window-body">
+            <div class="cmd-container">
+                <div class="cmd-header">Microsoft Windows [Version 10.0.19045.6466]</div>
+                <div class="cmd-header">(c) Microsoft Corporation. All rights reserved.</div>
+                <br>
+                <div class="cmd-hint">Hint: Enter 'admin' for both fields to authenticate.</div>
+                <br>
+                
+                <div id="cmd-user-line" class="cmd-row">
+                    <span class="cmd-prompt">C:\Users\guest&gt;login</span>
+                    <span class="cmd-prompt">Username:</span>
+                    <input type="text" id="login-username" autocomplete="off" spellcheck="false" autofocus>
+                </div>
+                
+                <div id="cmd-pass-line" class="cmd-row" style="display: none;">
+                    <span class="cmd-prompt">Password:</span>
+                    <input type="password" id="login-password">
+                </div>
+
+                <div id="login-error" class="cmd-error" style="display: none;">
+                    Invalid credentials. Access denied. Please try again.
+                </div>
+            </div>
+        </div>
+    </div>
 
     <main id="desktop">
         
@@ -25,14 +56,18 @@
 
         <div id="about-win" class="window" style="display: none; top: 10%; left: 15%;">
             <div class="window-header">
-                <span class="window-title"><img src="https://api.iconify.design/lucide:user-circle.svg?color=%23cbd5e1" alt="About" class="header-icon"> About_me.txt</span>
+                <span class="window-title">
+                    <img src="https://api.iconify.design/lucide:user-circle.svg?color=%23cbd5e1" alt="About" class="header-icon"> 
+                    About_me.txt
+                </span>
                 <div class="window-controls">
                     <button class="win-btn close-btn" onclick="closeWindow('about-win')">✕</button>
                 </div>
             </div>
+    
             <div class="window-body">
                 <h2>print("Hello World!")</h2>
-                <p>I am an incoming BSIT freshman, I'm building a solid foundation in software development and technical problem-solving.</p>
+                <p>I am an incoming BSIT freshman, building a solid foundation in software development and technical problem-solving.</p>
                 <hr>
                 <h3>Technical Passions:</h3>
                 <ul>
@@ -45,7 +80,10 @@
 
         <div id="projects-win" class="window" style="display: none; top: 20%; left: 30%;">
             <div class="window-header">
-                <span class="window-title"><img src="https://api.iconify.design/lucide:folder-code.svg?color=%23cbd5e1" alt="Projects" class="header-icon"> Debian Package Viewer: Projects.deb</span>
+                <span class="window-title">
+                    <img src="https://api.iconify.design/lucide:folder-code.svg?color=%23cbd5e1" alt="Projects" class="header-icon"> 
+                    Debian Package Viewer: Projects.deb
+                </span>
                 <div class="window-controls">
                     <button class="win-btn close-btn" onclick="closeWindow('projects-win')">✕</button>
                 </div>
@@ -68,8 +106,35 @@
 
     </main>
 
+    <div id="start-menu" style="display: none;">
+        <div class="start-menu-apps">
+            <div class="menu-item" onclick="handleMenuAppClick('about-win')">
+                <img src="https://api.iconify.design/lucide:user-circle.svg?color=%23cbd5e1" alt="About">
+                <span>About_me.txt</span>
+            </div>
+            <div class="menu-item" onclick="handleMenuAppClick('projects-win')">
+                <img src="https://api.iconify.design/lucide:folder-code.svg?color=%23cbd5e1" alt="Projects">
+                <span>Projects.deb</span>
+            </div>
+        </div>
+        
+        <div class="start-menu-sidebar">
+            <div class="user-profile">
+                <img src="https://api.iconify.design/lucide:user-circle.svg?color=%23cbd5e1" alt="Avatar" class="menu-user-avatar">
+                <span class="username">admin</span>
+            </div>
+            
+            <div class="power-container">
+                <button class="menu-logout-btn" onclick="triggerLogout()">
+                    <img src="https://api.iconify.design/lucide:log-out.svg?color=%23ffffff" alt="Logout">
+                    <span class="logout-text">Log Out</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <footer id="taskbar">
-        <button id="start-btn" style="font-family: monospace; font-weight: bold;">
+        <button id="start-btn" onclick="toggleStartMenu(event)" style="font-family: monospace; font-weight: bold;">
             <span style="color: #10b981;">$</span> sudo
         </button>
         <div id="active-apps"></div>

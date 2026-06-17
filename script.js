@@ -14,9 +14,122 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Close Start Menu if clicking outside
+    document.addEventListener("click", (e) => {
+        const menu = document.getElementById("start-menu");
+        const startBtn = document.getElementById("start-btn");
+        if (menu.style.display === "flex" && !menu.contains(e.target) && !startBtn.contains(e.target)) {
+            menu.style.display = "none";
+        }
+    });
+
+    // Setup CMD Authentication Routines
+    setupLogonAuthentication();
+
     // Start the system clock updates
     startClock();
 });
+
+// CMD Sign-in Engine
+function setupLogonAuthentication() {
+    const userInp = document.getElementById("login-username");
+    const passInp = document.getElementById("login-password");
+    const passLine = document.getElementById("cmd-pass-line");
+    const errBanner = document.getElementById("login-error");
+    const logonScreen = document.getElementById("logon-screen");
+
+    if (!userInp || !passInp) return;
+
+    userInp.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            if (userInp.value.trim() === "admin") {
+                if (errBanner) errBanner.style.display = "none";
+                if (passLine) passLine.style.display = "flex";
+                passInp.focus();
+            } else {
+                showAuthError();
+            }
+        }
+    });
+
+    passInp.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            if (passInp.value === "admin") {
+                if (logonScreen) {
+                    logonScreen.style.animation = "windowClose 0.25s ease-out forwards";
+                    setTimeout(() => {
+                        logonScreen.style.display = "none";
+                        // Cleanly show desktop & taskbar layout environments upon success
+                        document.body.classList.remove("auth-mode");
+                    }, 250);
+                }
+            } else {
+                showAuthError();
+            }
+        }
+    });
+
+    function showAuthError() {
+        if (errBanner) errBanner.style.display = "block";
+        userInp.value = "";
+        passInp.value = "";
+        if (passLine) passLine.style.display = "none";
+        userInp.focus();
+    }
+}
+
+// Global System Logout Sequence
+function triggerLogout() {
+    const logonScreen = document.getElementById("logon-screen");
+    const userInp = document.getElementById("login-username");
+    const passInp = document.getElementById("login-password");
+    const passLine = document.getElementById("cmd-pass-line");
+    const menu = document.getElementById("start-menu");
+
+    // Close Start Menu
+    if (menu) menu.style.display = "none";
+
+    // Reset fields
+    if (userInp) userInp.value = "";
+    if (passInp) passInp.value = "";
+    if (passLine) passLine.style.display = "none";
+
+    /* FIX: Purges manual coordinates from previous drag movements 
+       so it centers perfectly using the default stylesheet rules */
+    if (logonScreen) {
+        logonScreen.style.top = "";
+        logonScreen.style.left = "";
+        
+        // Re-engage screen lockout states immediately
+        document.body.classList.add("auth-mode");
+
+        // Show authentication screen
+        logonScreen.style.animation = "none";
+        logonScreen.style.display = "flex";
+    }
+    
+    if (userInp) userInp.focus();
+}
+
+// Toggle Windows 7 styled Start Menu
+function toggleStartMenu(event) {
+    event.stopPropagation();
+    const menu = document.getElementById("start-menu");
+    if (!menu) return;
+    
+    if (menu.style.display === "none" || menu.style.display === "") {
+        menu.style.display = "flex";
+    } else {
+        menu.style.display = "none";
+    }
+}
+
+// App selection handler from start menu
+function handleMenuAppClick(id) {
+    const menu = document.getElementById("start-menu");
+    if (menu) menu.style.display = "none";
+    openWindow(id);
+}
 
 // Open a specific window target by ID with animation
 function openWindow(id) {
@@ -35,7 +148,6 @@ function closeWindow(id) {
     if (win) {
         win.classList.remove("open-animation");
         win.classList.add("close-animation");
-        
         setTimeout(() => {
             win.style.display = "none";
             win.classList.remove("close-animation");
@@ -45,13 +157,15 @@ function closeWindow(id) {
 
 // Elevate window stack depth hierarchy
 function bringToFront(windowElement) {
+    if (!windowElement) return;
     topZIndex++;
     windowElement.style.zIndex = topZIndex;
 }
 
 // Logic dealing with manual coordinate displacement
 function makeWindowDraggable(windowElement) {
-    const header = windowElement.querySelector(".window-header");
+    if (!windowElement) return;
+    const header = windowElement.querySelector(".window-header") || windowElement.querySelector(".cmd-header");
     let changeInX = 0, changeInY = 0, currentMouseX = 0, currentMouseY = 0;
 
     if (header) {
@@ -59,6 +173,8 @@ function makeWindowDraggable(windowElement) {
     }
 
     function initiateDrag(e) {
+        // Essential Fix: Keeps input text selection functional and avoids drag locks inside forms
+        if (e.target.closest(".window-controls") || e.target.closest("input") || e.target.closest(".cmd-row")) return;
         e.preventDefault();
         currentMouseX = e.clientX;
         currentMouseY = e.clientY;
@@ -85,15 +201,13 @@ function makeWindowDraggable(windowElement) {
 // Real-time taskbar digital clock, date, and year routine
 function startClock() {
     const clockElement = document.getElementById("system-clock");
-    
+    if (!clockElement) return;
+
     setInterval(() => {
         const now = new Date();
-        
-        // Added 'year: numeric' to the options
         const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
         const dateStr = now.toLocaleDateString(undefined, options);
         
-        // Time formatting
         let hours = now.getHours();
         const minutes = String(now.getMinutes()).padStart(2, "0");
         const seconds = String(now.getSeconds()).padStart(2, "0");
@@ -104,8 +218,15 @@ function startClock() {
         const formattedHours = String(hours).padStart(2, "0");
         
         const timeStr = `${formattedHours}:${minutes}:${seconds} ${ampm}`;
-
-        // Displays: Sun, Jun 14, 2026 | 09:28:32 PM
         clockElement.textContent = `${dateStr} | ${timeStr}`;
     }, 1000);
+}
+
+// Target the logon interface container component node reference element directly
+const consoleLogonWindow = document.getElementById('logon-screen');
+if (consoleLogonWindow) {
+    makeWindowDraggable(consoleLogonWindow);
+    consoleLogonWindow.addEventListener('mousedown', () => {
+        bringToFront(consoleLogonWindow);
+    });
 }
