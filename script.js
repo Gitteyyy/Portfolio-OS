@@ -1,5 +1,7 @@
 // Window layering tracker
 let topZIndex = 10;
+// Set to track open application IDs for the taskbar
+const openApps = new Set();
 
 // Initialize DOM Events
 document.addEventListener("DOMContentLoaded", () => {
@@ -98,6 +100,10 @@ function triggerLogout() {
     logonScreen.style.display = "flex";
   }
 
+  // Clear running apps on layout reset
+  openApps.clear();
+  updateTaskbar();
+
   if (userInp) userInp.focus();
 }
 
@@ -120,14 +126,76 @@ function handleMenuAppClick(id) {
   openWindow(id);
 }
 
+// Taskbar Tracking & Synchronizer System
+function updateTaskbar() {
+  const activeAppsContainer = document.getElementById("active-apps");
+  if (!activeAppsContainer) return;
+  activeAppsContainer.innerHTML = "";
+
+  openApps.forEach((id) => {
+    const win = document.getElementById(id);
+    if (!win) return;
+
+    // Grab window title string cleanly
+    const fullTitle = win.querySelector(".window-title")?.textContent || "App";
+    const cleanTitle = fullTitle.replace(/[\n\r]+/g, "").trim();
+
+    const appBtn = document.createElement("button");
+    appBtn.className = "taskbar-app-btn";
+
+    // Highlight if the app window is visible and on top stack
+    if (!win.classList.contains("minimized") && win.style.display !== "none") {
+      if (parseInt(win.style.zIndex) === topZIndex) {
+        appBtn.classList.add("active");
+      }
+    }
+
+    appBtn.textContent = cleanTitle;
+
+    // Window taskbar state machine logic
+    appBtn.onclick = () => {
+      if (win.classList.contains("minimized")) {
+        restoreWindow(id);
+      } else if (parseInt(win.style.zIndex) === topZIndex) {
+        minimizeWindow(id);
+      } else {
+        bringToFront(win);
+        updateTaskbar();
+      }
+    };
+
+    activeAppsContainer.appendChild(appBtn);
+  });
+}
+
 // Window Visibility Controllers
 function openWindow(id) {
   const win = document.getElementById(id);
   if (win) {
-    win.classList.remove("close-animation");
+    win.classList.remove("close-animation", "minimized");
     win.style.display = "flex";
     win.classList.add("open-animation");
     bringToFront(win);
+
+    openApps.add(id);
+    updateTaskbar();
+  }
+}
+
+function minimizeWindow(id) {
+  const win = document.getElementById(id);
+  if (win) {
+    win.classList.add("minimized");
+    updateTaskbar();
+  }
+}
+
+function restoreWindow(id) {
+  const win = document.getElementById(id);
+  if (win) {
+    win.classList.remove("minimized");
+    bringToFront(win);
+    updateTaskbar();
   }
 }
 
@@ -139,6 +207,8 @@ function closeWindow(id) {
     setTimeout(() => {
       win.style.display = "none";
       win.classList.remove("close-animation");
+      openApps.delete(id);
+      updateTaskbar();
     }, 200);
   }
 }
@@ -148,6 +218,11 @@ function bringToFront(windowElement) {
   if (!windowElement) return;
   topZIndex++;
   windowElement.style.zIndex = topZIndex;
+
+  // Refresh focus states inside taskbar button list
+  if (windowElement.id && openApps.has(windowElement.id)) {
+    updateTaskbar();
+  }
 }
 
 // Drag & Drop Window Core Engine
