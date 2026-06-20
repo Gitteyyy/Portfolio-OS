@@ -100,7 +100,6 @@ function triggerLogout() {
     logonScreen.style.display = "flex";
   }
 
-  // Clear running apps on layout reset
   openApps.clear();
   updateTaskbar();
 
@@ -136,14 +135,12 @@ function updateTaskbar() {
     const win = document.getElementById(id);
     if (!win) return;
 
-    // Grab window title string cleanly
     const fullTitle = win.querySelector(".window-title")?.textContent || "App";
     const cleanTitle = fullTitle.replace(/[\n\r]+/g, "").trim();
 
     const appBtn = document.createElement("button");
     appBtn.className = "taskbar-app-btn";
 
-    // Highlight if the app window is visible and on top stack
     if (!win.classList.contains("minimized") && win.style.display !== "none") {
       if (parseInt(win.style.zIndex) === topZIndex) {
         appBtn.classList.add("active");
@@ -152,7 +149,6 @@ function updateTaskbar() {
 
     appBtn.textContent = cleanTitle;
 
-    // Window taskbar state machine logic
     appBtn.onclick = () => {
       if (win.classList.contains("minimized")) {
         restoreWindow(id);
@@ -182,6 +178,7 @@ function openWindow(id) {
   }
 }
 
+// Minimize a window view safely
 function minimizeWindow(id) {
   const win = document.getElementById(id);
   if (win) {
@@ -190,6 +187,7 @@ function minimizeWindow(id) {
   }
 }
 
+// Restore a minimized window from taskbar interaction
 function restoreWindow(id) {
   const win = document.getElementById(id);
   if (win) {
@@ -219,7 +217,6 @@ function bringToFront(windowElement) {
   topZIndex++;
   windowElement.style.zIndex = topZIndex;
 
-  // Refresh focus states inside taskbar button list
   if (windowElement.id && openApps.has(windowElement.id)) {
     updateTaskbar();
   }

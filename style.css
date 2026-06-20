@@ -36,8 +36,8 @@ body {
   height: 510px !important;
   max-width: none !important;
   min-width: 320px !important;
-  top: calc(50vh - 205px);
-  left: calc(50vw - 480px);
+  top: calc(50vh - 255px);
+  left: calc(50vw - 485px);
   transform: none !important;
   background: transparent !important;
   border: 1px solid rgba(255, 255, 255, 0.25) !important;
@@ -176,7 +176,8 @@ body {
 .window {
   position: absolute;
   min-width: 320px;
-  max-width: 500px;
+  width: 450px;
+  height: auto;
   background: var(--panel-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -193,7 +194,11 @@ body {
     transform 0.2s;
 }
 
-/* Minimize State Structural Modifier */
+#about-win,
+#projects-win {
+  width: 650px;
+}
+
 .window.minimized {
   opacity: 0 !important;
   transform: scale(0.9) translateY(40px) !important;
@@ -456,11 +461,9 @@ body {
   flex-grow: 1;
   margin: 0 20px;
   display: flex;
-  gap: 8px;
-  overflow-x: auto;
+  gap: 10px;
 }
 
-/* Responsive Dynamic Active App Indicators */
 .taskbar-app-btn {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -523,7 +526,6 @@ body {
   }
 }
 
-/* OS State View Controllers */
 body.auth-mode #desktop,
 body.auth-mode #taskbar {
   display: none !important;
