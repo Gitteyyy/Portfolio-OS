@@ -1,20 +1,18 @@
-// Global tracking for Window layering (Z-Index manipulation)
+// Window layering tracker
 let topZIndex = 10;
 
-// Initialize DOM loads completely
+// Initialize DOM Events
 document.addEventListener("DOMContentLoaded", () => {
-    // Make all windows draggable
     const windows = document.querySelectorAll(".window");
     windows.forEach(win => {
         makeWindowDraggable(win);
         
-        // Bring window to front when clicked anywhere on it
         win.addEventListener("mousedown", () => {
             bringToFront(win);
         });
     });
 
-    // Close Start Menu if clicking outside
+    // Close Start Menu on outside click
     document.addEventListener("click", (e) => {
         const menu = document.getElementById("start-menu");
         const startBtn = document.getElementById("start-btn");
@@ -23,14 +21,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Setup CMD Authentication Routines
     setupLogonAuthentication();
-
-    // Start the system clock updates
     startClock();
 });
 
-// CMD Sign-in Engine
+// CMD Authentication Engine
 function setupLogonAuthentication() {
     const userInp = document.getElementById("login-username");
     const passInp = document.getElementById("login-password");
@@ -59,7 +54,6 @@ function setupLogonAuthentication() {
                     logonScreen.style.animation = "windowClose 0.25s ease-out forwards";
                     setTimeout(() => {
                         logonScreen.style.display = "none";
-                        // Cleanly show desktop & taskbar layout environments upon success
                         document.body.classList.remove("auth-mode");
                     }, 250);
                 }
@@ -78,7 +72,7 @@ function setupLogonAuthentication() {
     }
 }
 
-// Global System Logout Sequence
+// System Logout Manager
 function triggerLogout() {
     const logonScreen = document.getElementById("logon-screen");
     const userInp = document.getElementById("login-username");
@@ -86,24 +80,16 @@ function triggerLogout() {
     const passLine = document.getElementById("cmd-pass-line");
     const menu = document.getElementById("start-menu");
 
-    // Close Start Menu
     if (menu) menu.style.display = "none";
 
-    // Reset fields
     if (userInp) userInp.value = "";
     if (passInp) passInp.value = "";
     if (passLine) passLine.style.display = "none";
 
-    /* FIX: Purges manual coordinates from previous drag movements 
-       so it centers perfectly using the default stylesheet rules */
     if (logonScreen) {
         logonScreen.style.top = "";
         logonScreen.style.left = "";
-        
-        // Re-engage screen lockout states immediately
         document.body.classList.add("auth-mode");
-
-        // Show authentication screen
         logonScreen.style.animation = "none";
         logonScreen.style.display = "flex";
     }
@@ -111,7 +97,7 @@ function triggerLogout() {
     if (userInp) userInp.focus();
 }
 
-// Toggle Windows 7 styled Start Menu
+// Start Menu Controls
 function toggleStartMenu(event) {
     event.stopPropagation();
     const menu = document.getElementById("start-menu");
@@ -124,14 +110,13 @@ function toggleStartMenu(event) {
     }
 }
 
-// App selection handler from start menu
 function handleMenuAppClick(id) {
     const menu = document.getElementById("start-menu");
     if (menu) menu.style.display = "none";
     openWindow(id);
 }
 
-// Open a specific window target by ID with animation
+// Window Visibility Controllers
 function openWindow(id) {
     const win = document.getElementById(id);
     if (win) {
@@ -142,7 +127,6 @@ function openWindow(id) {
     }
 }
 
-// Hide&Close a specific window target by ID with animation
 function closeWindow(id) {
     const win = document.getElementById(id);
     if (win) {
@@ -155,14 +139,14 @@ function closeWindow(id) {
     }
 }
 
-// Elevate window stack depth hierarchy
+// Window Depth Stack Manager
 function bringToFront(windowElement) {
     if (!windowElement) return;
     topZIndex++;
     windowElement.style.zIndex = topZIndex;
 }
 
-// Logic dealing with manual coordinate displacement
+// Drag & Drop Window Core Engine
 function makeWindowDraggable(windowElement) {
     if (!windowElement) return;
     const header = windowElement.querySelector(".window-header") || windowElement.querySelector(".cmd-header");
@@ -173,7 +157,6 @@ function makeWindowDraggable(windowElement) {
     }
 
     function initiateDrag(e) {
-        // Essential Fix: Keeps input text selection functional and avoids drag locks inside forms
         if (e.target.closest(".window-controls") || e.target.closest("input") || e.target.closest(".cmd-row")) return;
         e.preventDefault();
         currentMouseX = e.clientX;
@@ -198,7 +181,7 @@ function makeWindowDraggable(windowElement) {
     }
 }
 
-// Real-time taskbar digital clock, date, and year routine
+// Live Digital Clock Engine
 function startClock() {
     const clockElement = document.getElementById("system-clock");
     if (!clockElement) return;
@@ -222,7 +205,7 @@ function startClock() {
     }, 1000);
 }
 
-// Target the logon interface container component node reference element directly
+// Logon Window Drag Binding
 const consoleLogonWindow = document.getElementById('logon-screen');
 if (consoleLogonWindow) {
     makeWindowDraggable(consoleLogonWindow);
